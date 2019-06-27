@@ -5,6 +5,7 @@ import cn.appsys.pojo.DevUser;
 import cn.appsys.service.developer.DevUserService;
 import cn.appsys.tools.Constants;
 import cn.appsys.tools.EmptyUtil;
+import com.sun.org.apache.xpath.internal.SourceTree;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,17 +37,22 @@ public class DevLoginController extends BaseController {
     @RequestMapping("/doLogin")
     public String doLogin(String devCode, String devPassword) {
         DevUser user = service.login(devCode, devPassword);
-        if (!EmptyUtil.isEmpty(user)){
-            session.setAttribute(Constants.USER_SESSION,user);
-            return "developer/main";
-        }else{
-            request.setAttribute("error","用户名或者密码不正确");
+        if (EmptyUtil.isEmpty(user)){
+            request.setAttribute("error","用户名不存在");
             return "devLogin";
+        }else{
+            if (devPassword.equals(user.getDevPassword())){
+                session.setAttribute(Constants.USER_SESSION,user);
+                return "developer/main";
+            }else {
+                request.setAttribute("error","用户名或者密码不正确");
+                return "devLogin";
+            }
         }
     }
 
     //注销
-    @RequestMapping(value = "logOut")
+    @RequestMapping(value = "/logOut")
     public String logOut(){
         session.removeAttribute(Constants.USER_SESSION);
         return "devLogin";
