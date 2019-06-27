@@ -1,8 +1,11 @@
 package cn.appsys.pojo;
 
+import lombok.Data;
+
 import java.util.Date;
 
 
+@Data
 public class BackendUser {
 	private Integer id;//主键id
 	private String userCode;//用户编码（登录账号）
